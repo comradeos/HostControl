@@ -31,13 +31,17 @@ class CreateAccountHandler
         $errors = $this->validator->validate($command);
 
         if (count($errors) > 0) {
-            $messages = [];
+            $result = [];
 
             foreach ($errors as $error) {
-                $messages[] = $error->getMessage();
+                $field = $error->getPropertyPath();
+
+                $result[$field][] = $error->getMessage();
             }
 
-            throw new InvalidArgumentException(implode(', ', $messages));
+            throw new InvalidArgumentException(
+                json_encode($result)
+            );
         }
 
         $email = $command->getEmail();

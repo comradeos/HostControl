@@ -8,7 +8,6 @@ use App\Application\Account\CreateAccountCommand;
 use App\Application\Account\CreateAccountHandler;
 use App\Infrastructure\Http\ApiResponse;
 use App\Infrastructure\Http\AccountResponseMapper;
-use Random\RandomException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,9 +21,6 @@ class CreateAccountController
         $this->handler = $handler;
     }
 
-    /**
-     * @throws RandomException
-     */
     #[Route('/api/accounts', methods: ['POST'])]
     public function __invoke(Request $request): JsonResponse
     {

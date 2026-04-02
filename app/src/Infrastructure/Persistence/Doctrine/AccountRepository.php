@@ -76,6 +76,13 @@ class AccountRepository implements AccountRepositoryInterface
         return $result;
     }
 
+    public function countAll(): int
+    {
+        $repository = $this->entityManager->getRepository(AccountEntity::class);
+
+        return $repository->count([]);
+    }
+
     public function existsByEmail(string $email): bool
     {
         $repository = $this->entityManager->getRepository(AccountEntity::class);

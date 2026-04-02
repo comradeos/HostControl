@@ -51,3 +51,6 @@ validator-install:
 
 uuid-install:
 	docker exec -it $(APP_CONTAINER) composer require ramsey/uuid
+
+monolog-install:
+	docker exec -it $(APP_CONTAINER) composer require symfony/monolog-bundle

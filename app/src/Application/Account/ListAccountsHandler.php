@@ -17,15 +17,26 @@ class ListAccountsHandler
     }
 
     /**
-     * @return Account[]
+     * @return array{
+     *     items: Account[],
+     *     total: int,
+     *     limit: int,
+     *     offset: int
+     * }
      */
     public function handle(ListAccountsQuery $query): array
     {
         $limit = $query->getLimit();
         $offset = $query->getOffset();
 
-        $accounts = $this->repository->findAll($limit, $offset);
+        $items = $this->repository->findAll($limit, $offset);
+        $total = $this->repository->countAll();
 
-        return $accounts;
+        return [
+            'items' => $items,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+        ];
     }
 }

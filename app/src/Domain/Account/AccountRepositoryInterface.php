@@ -14,5 +14,7 @@ interface AccountRepositoryInterface
 
     public function findAll(int $limit, int $offset): array;
 
+    public function countAll(): int;
+
     public function existsByEmail(string $email): bool;
 }
