@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: ${APP_CONTAINER}
+    working_dir: /var/www/app
+    volumes:
+      - ./app:/var/www/app
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:latest
+    container_name: ${NGINX_CONTAINER}
+    ports:
+      - "${NGINX_PORT}:80"
+    volumes:
+      - ./app:/var/www/app
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  db:
+    image: mysql:${MYSQL_VERSION}
+    container_name: ${DB_CONTAINER}
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
