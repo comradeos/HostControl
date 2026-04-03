@@ -23,4 +23,12 @@ class ApiResponse
             'error' => $message,
         ], $status);
     }
+
+    public static function errors(array $errors): JsonResponse
+    {
+        return new JsonResponse([
+            'result' => false,
+            'errors' => $errors,
+        ], 400);
+    }
 }

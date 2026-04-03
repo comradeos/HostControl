@@ -7,6 +7,8 @@ namespace App\Infrastructure\Persistence\Doctrine;
 use App\Domain\Account\Account;
 use App\Domain\Account\AccountRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 class AccountRepository implements AccountRepositoryInterface
 {
@@ -19,24 +21,28 @@ class AccountRepository implements AccountRepositoryInterface
 
     public function save(Account $account): void
     {
-        $entity = new AccountEntity();
+        $repository = $this->entityManager->getRepository(AccountEntity::class);
 
-        $uuid = $account->getUuid();
-        $email = $account->getEmail();
-        $fullName = $account->getFullName();
-        $status = $account->getStatus();
-        $createdAt = $account->getCreatedAt();
+        $entity = $repository->findOneBy(['uuid' => $account->getUuid()]);
 
-        $entity->setUuid($uuid);
-        $entity->setEmail($email);
-        $entity->setFullName($fullName);
-        $entity->setStatus($status);
-        $entity->setCreatedAt($createdAt);
+        if ($entity === null) {
+            $entity = new AccountEntity();
+            $entity->setUuid($account->getUuid());
+            $entity->setEmail($account->getEmail());
+            $entity->setFullName($account->getFullName());
+            $entity->setCreatedAt($account->getCreatedAt());
+        }
+
+        $entity->setStatus($account->getStatus());
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function findById(int $id): ?Account
     {
         $entity = $this->entityManager->find(AccountEntity::class, $id);
@@ -80,7 +86,7 @@ class AccountRepository implements AccountRepositoryInterface
     {
         $repository = $this->entityManager->getRepository(AccountEntity::class);
 
-        return $repository->count([]);
+        return $repository->count();
     }
 
     public function existsByEmail(string $email): bool

@@ -6,7 +6,6 @@ namespace App\Infrastructure\Http;
 
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 class ExceptionListener
@@ -30,11 +29,9 @@ class ExceptionListener
             $message = $exception->getMessage();
             $decoded = json_decode($message, true);
 
+
             if (is_array($decoded)) {
-                $response = new JsonResponse([
-                    'result' => false,
-                    'errors' => $decoded,
-                ], 400);
+                $response = ApiResponse::errors($decoded);
 
                 $event->setResponse($response);
 
