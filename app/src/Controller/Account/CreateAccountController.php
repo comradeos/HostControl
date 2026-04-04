@@ -6,8 +6,8 @@ namespace App\Controller\Account;
 
 use App\Application\Account\CreateAccountCommand;
 use App\Application\Account\CreateAccountHandler;
+use App\Application\Common\ValidationException;
 use App\Infrastructure\Http\ApiResponse;
-use App\Infrastructure\Http\AccountResponseMapper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,6 +21,9 @@ class CreateAccountController
         $this->handler = $handler;
     }
 
+    /**
+     * @throws ValidationException
+     */
     #[Route('/api/accounts', methods: ['POST'])]
     public function __invoke(Request $request): JsonResponse
     {
@@ -36,7 +39,7 @@ class CreateAccountController
 
         $account = $this->handler->handle($command);
 
-        $responseData = AccountResponseMapper::map($account);
+        $responseData = $account->toArray();
 
         return ApiResponse::success($responseData);
     }

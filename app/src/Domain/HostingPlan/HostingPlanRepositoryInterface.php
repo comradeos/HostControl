@@ -13,4 +13,6 @@ interface HostingPlanRepositoryInterface
     public function findAll(int $limit, int $offset): array;
 
     public function countAll(): int;
+
+    public function delete(HostingPlan $plan): void;
 }

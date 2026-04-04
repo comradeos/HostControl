@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Account;
 
-use App\Domain\Account\Account;
+use App\Application\Account\DTO\AccountResponse;
 use App\Domain\Account\AccountRepositoryInterface;
 
 class ListAccountsHandler
@@ -18,7 +18,7 @@ class ListAccountsHandler
 
     /**
      * @return array{
-     *     items: Account[],
+     *     items: array[],
      *     total: int,
      *     limit: int,
      *     offset: int
@@ -29,8 +29,14 @@ class ListAccountsHandler
         $limit = $query->getLimit();
         $offset = $query->getOffset();
 
-        $items = $this->repository->findAll($limit, $offset);
+        $accounts = $this->repository->findAll($limit, $offset);
         $total = $this->repository->countAll();
+
+        $items = [];
+
+        foreach ($accounts as $account) {
+            $items[] = (new AccountResponse($account))->toArray();
+        }
 
         return [
             'items' => $items,

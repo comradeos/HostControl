@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http;
 
+use App\Application\Common\ValidationException;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -21,24 +22,24 @@ class ExceptionListener
     {
         $exception = $event->getThrowable();
 
+        if ($exception instanceof ValidationException) {
+            $this->logger->warning('Validation failed', [
+                'errors' => $exception->getErrors(),
+            ]);
+
+            $response = ApiResponse::errors($exception->getErrors());
+
+            $event->setResponse($response);
+
+            return;
+        }
+
         if ($exception instanceof InvalidArgumentException) {
             $this->logger->warning($exception->getMessage(), [
                 'exception' => $exception,
             ]);
 
-            $message = $exception->getMessage();
-            $decoded = json_decode($message, true);
-
-
-            if (is_array($decoded)) {
-                $response = ApiResponse::errors($decoded);
-
-                $event->setResponse($response);
-
-                return;
-            }
-
-            $response = ApiResponse::error($message);
+            $response = ApiResponse::error($exception->getMessage());
 
             $event->setResponse($response);
 

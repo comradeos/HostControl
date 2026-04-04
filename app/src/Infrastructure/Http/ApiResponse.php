@@ -8,12 +8,34 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ApiResponse
 {
-    public static function success(array $data): JsonResponse
+    public static function success(mixed $data, array $meta = []): JsonResponse
     {
-        return new JsonResponse([
+        if (is_array($data)) {
+            $normalized = [];
+
+            foreach ($data as $item) {
+                if (is_object($item) && method_exists($item, 'toArray')) {
+                    $normalized[] = $item->toArray();
+                } else {
+                    $normalized[] = $item;
+                }
+            }
+        } elseif (is_object($data) && method_exists($data, 'toArray')) {
+            $normalized = $data->toArray();
+        } else {
+            $normalized = $data;
+        }
+
+        $response = [
             'result' => true,
-            'data' => $data,
-        ]);
+            'data' => $normalized,
+        ];
+
+        if ($meta !== []) {
+            $response['meta'] = $meta;
+        }
+
+        return new JsonResponse($response);
     }
 
     public static function error(string $message, int $status = 400): JsonResponse

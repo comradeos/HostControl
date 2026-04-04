@@ -6,7 +6,7 @@ namespace App\Controller\Account;
 
 use App\Application\Account\ListAccountsHandler;
 use App\Application\Account\ListAccountsQuery;
-use App\Infrastructure\Http\AccountResponseMapper;
+use App\Infrastructure\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,20 +33,13 @@ class ListAccountsController
 
         $data = $this->handler->handle($query);
 
-        $items = [];
-
-        foreach ($data['items'] as $account) {
-            $items[] = AccountResponseMapper::map($account);
-        }
-
-        return new JsonResponse([
-            'result' => true,
-            'data' => $items,
-            'meta' => [
+        return ApiResponse::success(
+            $data['items'],
+            [
                 'total' => $data['total'],
                 'limit' => $data['limit'],
                 'offset' => $data['offset'],
-            ],
-        ]);
+            ]
+        );
     }
 }
