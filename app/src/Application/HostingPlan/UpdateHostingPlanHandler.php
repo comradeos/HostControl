@@ -8,11 +8,10 @@ use App\Application\Common\ValidationException;
 use App\Application\Common\ValidationHelper;
 use App\Domain\HostingPlan\HostingPlan;
 use App\Domain\HostingPlan\HostingPlanRepositoryInterface;
-use DateTimeImmutable;
-use Ramsey\Uuid\Uuid;
+use InvalidArgumentException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class CreateHostingPlanHandler
+class UpdateHostingPlanHandler
 {
     private HostingPlanRepositoryInterface $repository;
 
@@ -29,23 +28,27 @@ class CreateHostingPlanHandler
     /**
      * @throws ValidationException
      */
-    public function handle(CreateHostingPlanCommand $command): HostingPlan
+    public function handle(UpdateHostingPlanCommand $command): void
     {
         ValidationHelper::validate($command, $this->validator);
 
-        $uuid = Uuid::uuid7()->toString();
+        $uuid = $command->getUuid();
 
-        $plan = new HostingPlan(
-            uuid: $uuid,
+        $plan = $this->repository->findByUuid($uuid);
+
+        if ($plan === null) {
+            throw new InvalidArgumentException('Hosting plan not found');
+        }
+
+        $updated = new HostingPlan(
+            uuid: $plan->getUuid(),
             name: $command->getName(),
             diskSpaceMb: $command->getDiskSpaceMb(),
             bandwidthMb: $command->getBandwidthMb(),
             price: $command->getPrice(),
-            createdAt: new DateTimeImmutable()
+            createdAt: $plan->getCreatedAt()
         );
 
-        $this->repository->save($plan);
-
-        return $plan;
+        $this->repository->save($updated);
     }
 }

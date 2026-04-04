@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Account;
 
+use App\Application\Common\ValidationException;
+use App\Application\Common\ValidationHelper;
 use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\AccountStatus;
 use InvalidArgumentException;
@@ -23,23 +25,12 @@ class UpdateAccountStatusHandler
         $this->validator = $validator;
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function handle(UpdateAccountStatusCommand $command): void
     {
-        $errors = $this->validator->validate($command);
-
-        if (count($errors) > 0) {
-            $result = [];
-
-            foreach ($errors as $error) {
-                $field = $error->getPropertyPath();
-
-                $result[$field][] = $error->getMessage();
-            }
-
-            throw new InvalidArgumentException(
-                json_encode($result)
-            );
-        }
+        ValidationHelper::validate($command, $this->validator);
 
         $uuid = $command->getUuid();
         $statusValue = $command->getStatus();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Account;
 
+use App\Application\Account\DTO\AccountResponse;
 use App\Domain\Account\Account;
 use App\Domain\Account\AccountRepositoryInterface;
 use InvalidArgumentException;
@@ -17,7 +18,7 @@ class GetAccountByUuidHandler
         $this->repository = $repository;
     }
 
-    public function handle(string $uuid): Account
+    public function handle(string $uuid): AccountResponse
     {
         $account = $this->repository->findByUuid($uuid);
 
@@ -25,6 +26,6 @@ class GetAccountByUuidHandler
             throw new InvalidArgumentException('Account not found');
         }
 
-        return $account;
+        return new AccountResponse($account);
     }
 }

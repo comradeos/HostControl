@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Account;
 
 use App\Application\Account\GetAccountByUuidHandler;
-use App\Infrastructure\Http\AccountResponseMapper;
 use App\Infrastructure\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,7 +23,7 @@ class GetAccountByUuidController
     {
         $account = $this->handler->handle($uuid);
 
-        $data = AccountResponseMapper::map($account);
+        $data = $account->toArray();
 
         return ApiResponse::success($data);
     }

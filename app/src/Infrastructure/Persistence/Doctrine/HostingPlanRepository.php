@@ -38,6 +38,20 @@ class HostingPlanRepository implements HostingPlanRepositoryInterface
         $this->entityManager->flush();
     }
 
+    public function delete(HostingPlan $plan): void
+    {
+        $repository = $this->entityManager->getRepository(HostingPlanEntity::class);
+
+        $entity = $repository->findOneBy(['uuid' => $plan->getUuid()]);
+
+        if ($entity === null) {
+            return;
+        }
+
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
+    }
+
     public function findByUuid(string $uuid): ?HostingPlan
     {
         $repository = $this->entityManager->getRepository(HostingPlanEntity::class);

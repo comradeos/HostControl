@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Account;
 
+use App\Application\Account\DTO\AccountResponse;
+use App\Application\Common\ValidationException;
+use App\Application\Common\ValidationHelper;
 use App\Domain\Account\Account;
 use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\AccountStatus;
@@ -26,23 +29,12 @@ class CreateAccountHandler
         $this->validator = $validator;
     }
 
-    public function handle(CreateAccountCommand $command): Account
+    /**
+     * @throws ValidationException
+     */
+    public function handle(CreateAccountCommand $command): AccountResponse
     {
-        $errors = $this->validator->validate($command);
-
-        if (count($errors) > 0) {
-            $result = [];
-
-            foreach ($errors as $error) {
-                $field = $error->getPropertyPath();
-
-                $result[$field][] = $error->getMessage();
-            }
-
-            throw new InvalidArgumentException(
-                json_encode($result)
-            );
-        }
+        ValidationHelper::validate($command, $this->validator);
 
         $email = $command->getEmail();
 
@@ -67,7 +59,7 @@ class CreateAccountHandler
 
         $this->repository->save($account);
 
-        return $account;
+        return new AccountResponse($account);
     }
 
     private function generateUuid(): string
