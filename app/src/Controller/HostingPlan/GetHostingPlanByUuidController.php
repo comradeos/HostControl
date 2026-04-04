@@ -21,15 +21,8 @@ class GetHostingPlanByUuidController
     #[Route('/api/hosting-plans/{uuid}', methods: ['GET'])]
     public function __invoke(string $uuid): JsonResponse
     {
-        $plan = $this->handler->handle($uuid);
+        $dto = $this->handler->handle($uuid);
 
-        return ApiResponse::success([
-            'uuid' => $plan->getUuid(),
-            'name' => $plan->getName(),
-            'disk_space_mb' => $plan->getDiskSpaceMb(),
-            'bandwidth_mb' => $plan->getBandwidthMb(),
-            'price' => $plan->getPrice(),
-            'created_at' => $plan->getCreatedAt()->format('Y-m-d H:i:s'),
-        ]);
+        return ApiResponse::success($dto->toArray());
     }
 }

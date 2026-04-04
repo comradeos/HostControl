@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\HostingPlan;
 
+use App\Application\HostingPlan\DTO\HostingPlanResponse;
 use App\Domain\HostingPlan\HostingPlanRepositoryInterface;
 
 class ListHostingPlansHandler
@@ -23,8 +24,14 @@ class ListHostingPlansHandler
         $items = $this->repository->findAll($limit, $offset);
         $total = $this->repository->countAll();
 
+        $result = [];
+
+        foreach ($items as $item) {
+            $result[] = new HostingPlanResponse($item);
+        }
+
         return [
-            'items' => $items,
+            'items' => $result,
             'total' => $total,
             'limit' => $limit,
             'offset' => $offset,

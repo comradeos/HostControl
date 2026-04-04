@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\HostingPlan;
 
+use App\Application\Common\ValidationException;
 use App\Application\HostingPlan\UpdateHostingPlanCommand;
 use App\Application\HostingPlan\UpdateHostingPlanHandler;
 use App\Infrastructure\Http\ApiResponse;
@@ -20,6 +21,9 @@ class UpdateHostingPlanController
         $this->handler = $handler;
     }
 
+    /**
+     * @throws ValidationException
+     */
     #[Route('/api/hosting-plans/{uuid}', methods: ['PATCH'])]
     public function __invoke(string $uuid, Request $request): JsonResponse
     {
@@ -33,8 +37,8 @@ class UpdateHostingPlanController
             price: (float) ($data['price'] ?? 0)
         );
 
-        $this->handler->handle($command);
+        $dto = $this->handler->handle($command);
 
-        return ApiResponse::success([]);
+        return ApiResponse::success($dto->toArray());
     }
 }

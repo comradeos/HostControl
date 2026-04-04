@@ -6,6 +6,7 @@ namespace App\Controller\HostingPlan;
 
 use App\Application\HostingPlan\ListHostingPlansHandler;
 use App\Application\HostingPlan\ListHostingPlansQuery;
+use App\Infrastructure\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,25 +35,14 @@ class ListHostingPlansController
 
         $items = [];
 
-        foreach ($data['items'] as $plan) {
-            $items[] = [
-                'uuid' => $plan->getUuid(),
-                'name' => $plan->getName(),
-                'disk_space_mb' => $plan->getDiskSpaceMb(),
-                'bandwidth_mb' => $plan->getBandwidthMb(),
-                'price' => $plan->getPrice(),
-                'created_at' => $plan->getCreatedAt()->format('Y-m-d H:i:s'),
-            ];
+        foreach ($data['items'] as $dto) {
+            $items[] = $dto->toArray();
         }
 
-        return new JsonResponse([
-            'result' => true,
-            'data' => $items,
-            'meta' => [
-                'total' => $data['total'],
-                'limit' => $data['limit'],
-                'offset' => $data['offset'],
-            ],
+        return ApiResponse::success($items, [
+            'total' => $data['total'],
+            'limit' => $data['limit'],
+            'offset' => $data['offset'],
         ]);
     }
 }

@@ -6,6 +6,7 @@ namespace App\Application\HostingPlan;
 
 use App\Application\Common\ValidationException;
 use App\Application\Common\ValidationHelper;
+use App\Application\HostingPlan\DTO\HostingPlanResponse;
 use App\Domain\HostingPlan\HostingPlan;
 use App\Domain\HostingPlan\HostingPlanRepositoryInterface;
 use DateTimeImmutable;
@@ -29,7 +30,7 @@ class CreateHostingPlanHandler
     /**
      * @throws ValidationException
      */
-    public function handle(CreateHostingPlanCommand $command): HostingPlan
+    public function handle(CreateHostingPlanCommand $command): HostingPlanResponse
     {
         ValidationHelper::validate($command, $this->validator);
 
@@ -46,6 +47,6 @@ class CreateHostingPlanHandler
 
         $this->repository->save($plan);
 
-        return $plan;
+        return new HostingPlanResponse($plan);
     }
 }

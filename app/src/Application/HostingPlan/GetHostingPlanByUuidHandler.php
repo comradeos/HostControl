@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\HostingPlan;
 
-use App\Domain\HostingPlan\HostingPlan;
+use App\Application\HostingPlan\DTO\HostingPlanResponse;
 use App\Domain\HostingPlan\HostingPlanRepositoryInterface;
 use InvalidArgumentException;
 
@@ -17,7 +17,7 @@ class GetHostingPlanByUuidHandler
         $this->repository = $repository;
     }
 
-    public function handle(string $uuid): HostingPlan
+    public function handle(string $uuid): HostingPlanResponse
     {
         $plan = $this->repository->findByUuid($uuid);
 
@@ -25,6 +25,6 @@ class GetHostingPlanByUuidHandler
             throw new InvalidArgumentException('Hosting plan not found');
         }
 
-        return $plan;
+        return new HostingPlanResponse($plan);
     }
 }
