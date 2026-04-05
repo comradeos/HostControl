@@ -16,5 +16,9 @@ interface AccountRepositoryInterface
 
     public function countAll(): int;
 
+    public function findByStatus(string $status, int $limit, int $offset): array;
+
+    public function countByStatus(string $status): int;
+
     public function existsByEmail(string $email): bool;
 }

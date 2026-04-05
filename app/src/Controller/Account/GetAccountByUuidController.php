@@ -21,10 +21,8 @@ class GetAccountByUuidController
     #[Route('/api/accounts/{uuid}', methods: ['GET'])]
     public function __invoke(string $uuid): JsonResponse
     {
-        $account = $this->handler->handle($uuid);
+        $dto = $this->handler->handle($uuid);
 
-        $data = $account->toArray();
-
-        return ApiResponse::success($data);
+        return ApiResponse::success($dto);
     }
 }

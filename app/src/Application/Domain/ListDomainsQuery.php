@@ -2,21 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Account;
+namespace App\Application\Domain;
 
-class ListAccountsQuery
+class ListDomainsQuery
 {
     private int $limit;
 
     private int $offset;
 
-    private ?string $status;
-
-    public function __construct(int $limit, int $offset, ?string $status = null)
+    public function __construct(int $limit = 10, int $offset = 0)
     {
         $this->limit = $limit;
         $this->offset = $offset;
-        $this->status = $status;
     }
 
     public function getLimit(): int
@@ -27,10 +24,5 @@ class ListAccountsQuery
     public function getOffset(): int
     {
         return $this->offset;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
     }
 }

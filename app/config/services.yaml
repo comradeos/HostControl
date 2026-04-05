@@ -17,6 +17,9 @@ services:
     App\Domain\Account\AccountRepositoryInterface:
         alias: App\Infrastructure\Persistence\Doctrine\AccountRepository
 
+    App\Domain\Domain\DomainRepositoryInterface:
+        alias: App\Infrastructure\Persistence\Doctrine\DomainRepository
+
     App\Infrastructure\Http\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }

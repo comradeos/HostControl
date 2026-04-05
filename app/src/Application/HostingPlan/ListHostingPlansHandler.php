@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\HostingPlan;
 
+use App\Application\Common\PaginationResult;
 use App\Application\HostingPlan\DTO\HostingPlanResponse;
 use App\Domain\HostingPlan\HostingPlanRepositoryInterface;
 
@@ -16,7 +17,7 @@ class ListHostingPlansHandler
         $this->repository = $repository;
     }
 
-    public function handle(ListHostingPlansQuery $query): array
+    public function handle(ListHostingPlansQuery $query): PaginationResult
     {
         $limit = $query->getLimit();
         $offset = $query->getOffset();
@@ -30,11 +31,11 @@ class ListHostingPlansHandler
             $result[] = new HostingPlanResponse($item);
         }
 
-        return [
-            'items' => $result,
-            'total' => $total,
-            'limit' => $limit,
-            'offset' => $offset,
-        ];
+        return new PaginationResult(
+            items: $result,
+            total: $total,
+            limit: $limit,
+            offset: $offset
+        );
     }
 }

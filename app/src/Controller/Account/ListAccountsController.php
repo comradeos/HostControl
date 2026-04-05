@@ -25,21 +25,24 @@ class ListAccountsController
     {
         $limit = (int) $request->query->get('limit', 10);
         $offset = (int) $request->query->get('offset', 0);
+        $status = $request->query->get('status');
 
         $query = new ListAccountsQuery(
             limit: $limit,
-            offset: $offset
+            offset: $offset,
+            status: $status
         );
 
-        $data = $this->handler->handle($query);
+        $pagination = $this->handler->handle($query);
 
-        return ApiResponse::success(
-            $data['items'],
-            [
-                'total' => $data['total'],
-                'limit' => $data['limit'],
-                'offset' => $data['offset'],
-            ]
-        );
+        $items = $pagination->getItems();
+
+        $meta = [
+            'total' => $pagination->getTotal(),
+            'limit' => $pagination->getLimit(),
+            'offset' => $pagination->getOffset(),
+        ];
+
+        return ApiResponse::success($items, $meta);
     }
 }
