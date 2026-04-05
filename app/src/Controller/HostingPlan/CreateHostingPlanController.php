@@ -38,8 +38,6 @@ class CreateHostingPlanController
 
         $dto = $this->handler->handle($command);
 
-        return ApiResponse::success([
-            'uuid' => $dto->uuid,
-        ]);
+        return ApiResponse::success($dto->toArray());
     }
 }

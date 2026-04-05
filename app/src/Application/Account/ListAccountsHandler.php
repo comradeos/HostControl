@@ -21,9 +21,15 @@ class ListAccountsHandler
     {
         $limit = $query->getLimit();
         $offset = $query->getOffset();
+        $status = $query->getStatus();
 
-        $accounts = $this->repository->findAll($limit, $offset);
-        $total = $this->repository->countAll();
+        if ($status !== null) {
+            $accounts = $this->repository->findByStatus($status, $limit, $offset);
+            $total = $this->repository->countByStatus($status);
+        } else {
+            $accounts = $this->repository->findAll($limit, $offset);
+            $total = $this->repository->countAll();
+        }
 
         $items = [];
 

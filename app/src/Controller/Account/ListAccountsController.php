@@ -25,10 +25,12 @@ class ListAccountsController
     {
         $limit = (int) $request->query->get('limit', 10);
         $offset = (int) $request->query->get('offset', 0);
+        $status = $request->query->get('status');
 
         $query = new ListAccountsQuery(
             limit: $limit,
-            offset: $offset
+            offset: $offset,
+            status: $status
         );
 
         $pagination = $this->handler->handle($query);

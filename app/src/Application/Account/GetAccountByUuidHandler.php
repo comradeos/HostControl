@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Account;
 
 use App\Application\Account\DTO\AccountResponse;
-use App\Domain\Account\Account;
 use App\Domain\Account\AccountRepositoryInterface;
 use InvalidArgumentException;
 

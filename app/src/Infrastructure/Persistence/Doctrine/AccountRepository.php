@@ -89,6 +89,33 @@ class AccountRepository implements AccountRepositoryInterface
         return $repository->count();
     }
 
+    public function findByStatus(string $status, int $limit, int $offset): array
+    {
+        $repository = $this->entityManager->getRepository(AccountEntity::class);
+
+        $entities = $repository->findBy(
+            ['status' => $status],
+            null,
+            $limit,
+            $offset
+        );
+
+        $result = [];
+
+        foreach ($entities as $entity) {
+            $result[] = $this->mapToDomain($entity);
+        }
+
+        return $result;
+    }
+
+    public function countByStatus(string $status): int
+    {
+        $repository = $this->entityManager->getRepository(AccountEntity::class);
+
+        return $repository->count(['status' => $status]);
+    }
+
     public function existsByEmail(string $email): bool
     {
         $repository = $this->entityManager->getRepository(AccountEntity::class);
