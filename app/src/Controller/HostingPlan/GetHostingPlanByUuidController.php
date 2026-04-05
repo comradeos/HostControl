@@ -23,6 +23,6 @@ class GetHostingPlanByUuidController
     {
         $dto = $this->handler->handle($uuid);
 
-        return ApiResponse::success($dto->toArray());
+        return ApiResponse::success($dto);
     }
 }

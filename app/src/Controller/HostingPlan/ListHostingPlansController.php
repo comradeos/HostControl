@@ -31,18 +31,16 @@ class ListHostingPlansController
             offset: $offset
         );
 
-        $data = $this->handler->handle($query);
+        $pagination = $this->handler->handle($query);
 
-        $items = [];
+        $items = $pagination->getItems();
 
-        foreach ($data['items'] as $dto) {
-            $items[] = $dto->toArray();
-        }
+        $meta = [
+            'total' => $pagination->getTotal(),
+            'limit' => $pagination->getLimit(),
+            'offset' => $pagination->getOffset(),
+        ];
 
-        return ApiResponse::success($items, [
-            'total' => $data['total'],
-            'limit' => $data['limit'],
-            'offset' => $data['offset'],
-        ]);
+        return ApiResponse::success($items, $meta);
     }
 }

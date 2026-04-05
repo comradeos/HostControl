@@ -31,15 +31,16 @@ class ListAccountsController
             offset: $offset
         );
 
-        $data = $this->handler->handle($query);
+        $pagination = $this->handler->handle($query);
 
-        return ApiResponse::success(
-            $data['items'],
-            [
-                'total' => $data['total'],
-                'limit' => $data['limit'],
-                'offset' => $data['offset'],
-            ]
-        );
+        $items = $pagination->getItems();
+
+        $meta = [
+            'total' => $pagination->getTotal(),
+            'limit' => $pagination->getLimit(),
+            'offset' => $pagination->getOffset(),
+        ];
+
+        return ApiResponse::success($items, $meta);
     }
 }

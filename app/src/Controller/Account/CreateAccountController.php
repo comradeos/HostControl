@@ -37,10 +37,8 @@ class CreateAccountController
             fullName: $fullName
         );
 
-        $account = $this->handler->handle($command);
+        $dto = $this->handler->handle($command);
 
-        $responseData = $account->toArray();
-
-        return ApiResponse::success($responseData);
+        return ApiResponse::success($dto);
     }
 }

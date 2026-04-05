@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Account;
 
 use App\Application\Account\DTO\AccountResponse;
+use App\Application\Common\PaginationResult;
 use App\Domain\Account\AccountRepositoryInterface;
 
 class ListAccountsHandler
@@ -16,15 +17,7 @@ class ListAccountsHandler
         $this->repository = $repository;
     }
 
-    /**
-     * @return array{
-     *     items: array[],
-     *     total: int,
-     *     limit: int,
-     *     offset: int
-     * }
-     */
-    public function handle(ListAccountsQuery $query): array
+    public function handle(ListAccountsQuery $query): PaginationResult
     {
         $limit = $query->getLimit();
         $offset = $query->getOffset();
@@ -35,14 +28,14 @@ class ListAccountsHandler
         $items = [];
 
         foreach ($accounts as $account) {
-            $items[] = (new AccountResponse($account))->toArray();
+            $items[] = new AccountResponse($account);
         }
 
-        return [
-            'items' => $items,
-            'total' => $total,
-            'limit' => $limit,
-            'offset' => $offset,
-        ];
+        return new PaginationResult(
+            items: $items,
+            total: $total,
+            limit: $limit,
+            offset: $offset
+        );
     }
 }

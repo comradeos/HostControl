@@ -6,6 +6,7 @@ namespace App\Controller\Account;
 
 use App\Application\Account\UpdateAccountStatusCommand;
 use App\Application\Account\UpdateAccountStatusHandler;
+use App\Application\Common\ValidationException;
 use App\Infrastructure\Http\ApiResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,9 @@ class UpdateAccountStatusController
         $this->handler = $handler;
     }
 
+    /**
+     * @throws ValidationException
+     */
     #[Route('/api/accounts/{uuid}/status', methods: ['PATCH'])]
     public function __invoke(string $uuid, Request $request): JsonResponse
     {

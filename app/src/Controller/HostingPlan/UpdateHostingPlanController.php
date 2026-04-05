@@ -39,6 +39,6 @@ class UpdateHostingPlanController
 
         $dto = $this->handler->handle($command);
 
-        return ApiResponse::success($dto->toArray());
+        return ApiResponse::success($dto);
     }
 }
