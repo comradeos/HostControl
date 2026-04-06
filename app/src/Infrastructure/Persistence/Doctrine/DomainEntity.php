@@ -8,7 +8,12 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'domains')]
+#[ORM\Table(
+    name: 'domains',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(name: 'uniq_domain_name', columns: ['name'])
+    ]
+)]
 class DomainEntity
 {
     #[ORM\Id]

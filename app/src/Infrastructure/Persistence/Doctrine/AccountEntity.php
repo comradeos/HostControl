@@ -9,7 +9,12 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'accounts')]
+#[ORM\Table(
+    name: 'accounts',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(name: 'uniq_account_email', columns: ['email'])
+    ]
+)]
 class AccountEntity
 {
     #[ORM\Id]

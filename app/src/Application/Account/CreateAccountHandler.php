@@ -11,7 +11,6 @@ use App\Domain\Account\Account;
 use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\AccountStatus;
 use DateTimeImmutable;
-use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -36,15 +35,8 @@ class CreateAccountHandler
     {
         ValidationHelper::validate($command, $this->validator);
 
-        $email = $command->getEmail();
-
-        $exists = $this->repository->existsByEmail($email);
-
-        if ($exists === true) {
-            throw new InvalidArgumentException('Account with this email already exists');
-        }
-
         $uuid = $this->generateUuid();
+        $email = $command->getEmail();
         $fullName = $command->getFullName();
         $status = AccountStatus::ACTIVE;
         $createdAt = new DateTimeImmutable();

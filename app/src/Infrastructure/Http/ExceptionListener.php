@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Http;
 
 use App\Application\Common\ValidationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -28,6 +29,18 @@ class ExceptionListener
             ]);
 
             $response = ApiResponse::errors($exception->getErrors());
+
+            $event->setResponse($response);
+
+            return;
+        }
+
+        if ($exception instanceof UniqueConstraintViolationException) {
+            $this->logger->warning('Unique constraint violation', [
+                'exception' => $exception,
+            ]);
+
+            $response = ApiResponse::error('Resource already exists', 400);
 
             $event->setResponse($response);
 

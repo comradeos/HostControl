@@ -10,12 +10,12 @@ class CreateDomainCommand
 {
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    private string $name;
+    private ?string $name;
 
     #[Assert\NotBlank]
-    private string $accountUuid;
+    private ?string $accountUuid;
 
-    public function __construct(string $name, string $accountUuid)
+    public function __construct(?string $name, ?string $accountUuid)
     {
         $this->name = $name;
         $this->accountUuid = $accountUuid;
@@ -23,11 +23,11 @@ class CreateDomainCommand
 
     public function getName(): string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 
     public function getAccountUuid(): string
     {
-        return $this->accountUuid;
+        return (string) $this->accountUuid;
     }
 }
