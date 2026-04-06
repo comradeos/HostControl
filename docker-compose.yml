@@ -7,8 +7,10 @@ services:
     working_dir: /var/www/app
     volumes:
       - ./app:/var/www/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/xdebug.ini
     depends_on:
       - db
+      - redis
 
   nginx:
     image: nginx:latest
@@ -34,6 +36,30 @@ services:
       - "${MYSQL_PORT}:3306"
     volumes:
       - db_data:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - nginx
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
 
 volumes:
   db_data:
