@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Domain;
 
+use DateTimeImmutable;
+
 class Domain
 {
     private string $uuid;
@@ -14,14 +16,14 @@ class Domain
 
     private string $status;
 
-    private \DateTimeImmutable $createdAt;
+    private DateTimeImmutable $createdAt;
 
     public function __construct(
         string $uuid,
         string $name,
         string $accountUuid,
         string $status,
-        \DateTimeImmutable $createdAt
+        DateTimeImmutable $createdAt
     ) {
         $this->uuid = $uuid;
         $this->name = $name;
@@ -50,7 +52,7 @@ class Domain
         return $this->status;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
