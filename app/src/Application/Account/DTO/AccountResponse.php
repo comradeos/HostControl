@@ -14,6 +14,8 @@ class AccountResponse
 
     public string $fullName;
 
+    public string $role;
+
     public string $status;
 
     public string $createdAt;
@@ -23,6 +25,7 @@ class AccountResponse
         $this->uuid = $account->getUuid();
         $this->email = $account->getEmail();
         $this->fullName = $account->getFullName();
+        $this->role = $account->getRole()->value;
         $this->status = $account->getStatus()->value;
         $this->createdAt = $account->getCreatedAt()->format('Y-m-d H:i:s');
     }
@@ -33,6 +36,7 @@ class AccountResponse
             'uuid' => $this->uuid,
             'email' => $this->email,
             'full_name' => $this->fullName,
+            'role' => $this->role,
             'status' => $this->status,
             'created_at' => $this->createdAt,
         ];

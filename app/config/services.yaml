@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
 
 parameters:
+    jwt_secret: 'your-secret-key'
 
 services:
     _defaults:
@@ -24,9 +25,17 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
+    App\Infrastructure\Http\JwtAuthListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
     App\Infrastructure\Monitoring\DoctrineMetricsMiddleware:
         tags:
             - { name: doctrine.middleware }
+
+    App\Infrastructure\Security\JwtService:
+        arguments:
+            $secret: '%jwt_secret%'
 
     Prometheus\Storage\Redis:
         arguments:

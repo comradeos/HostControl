@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine;
 
+use App\Domain\Account\AccountRole;
 use App\Domain\Account\AccountStatus;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
@@ -28,8 +29,14 @@ class AccountEntity
     #[ORM\Column(type: 'string', length: 255)]
     private string $email;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $password;
+
     #[ORM\Column(name: 'full_name', type: 'string', length: 255)]
     private string $fullName;
+
+    #[ORM\Column(type: 'string', enumType: AccountRole::class)]
+    private AccountRole $role;
 
     #[ORM\Column(type: 'string', enumType: AccountStatus::class)]
     private AccountStatus $status;
@@ -47,9 +54,19 @@ class AccountEntity
         $this->email = $email;
     }
 
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
+    }
+
     public function setFullName(string $fullName): void
     {
         $this->fullName = $fullName;
+    }
+
+    public function setRole(AccountRole $role): void
+    {
+        $this->role = $role;
     }
 
     public function setStatus(AccountStatus $status): void
@@ -77,9 +94,19 @@ class AccountEntity
         return $this->email;
     }
 
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
     public function getFullName(): string
     {
         return $this->fullName;
+    }
+
+    public function getRole(): AccountRole
+    {
+        return $this->role;
     }
 
     public function getStatus(): AccountStatus

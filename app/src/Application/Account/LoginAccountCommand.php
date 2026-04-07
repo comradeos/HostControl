@@ -6,25 +6,19 @@ namespace App\Application\Account;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateAccountCommand
+class LoginAccountCommand
 {
     #[Assert\NotBlank]
     #[Assert\Email]
     private ?string $email;
 
     #[Assert\NotBlank]
-    #[Assert\Length(min: 6, max: 255)]
     private ?string $password;
 
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 255)]
-    private ?string $fullName;
-
-    public function __construct(?string $email, ?string $password, ?string $fullName)
+    public function __construct(?string $email, ?string $password)
     {
         $this->email = $email;
         $this->password = $password;
-        $this->fullName = $fullName;
     }
 
     public function getEmail(): string
@@ -35,10 +29,5 @@ class CreateAccountCommand
     public function getPassword(): string
     {
         return $this->password ?? '';
-    }
-
-    public function getFullName(): string
-    {
-        return $this->fullName ?? '';
     }
 }

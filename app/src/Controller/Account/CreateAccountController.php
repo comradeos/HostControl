@@ -8,10 +8,12 @@ use App\Application\Account\CreateAccountCommand;
 use App\Application\Account\CreateAccountHandler;
 use App\Application\Common\ValidationException;
 use App\Infrastructure\Http\ApiResponse;
+use App\Infrastructure\Http\Attribute\PublicRoute;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[PublicRoute]
 class CreateAccountController
 {
     private CreateAccountHandler $handler;
@@ -30,10 +32,12 @@ class CreateAccountController
         $data = json_decode($request->getContent(), true);
 
         $email = $data['email'] ?? null;
+        $password = $data['password'] ?? null;
         $fullName = $data['full_name'] ?? null;
 
         $command = new CreateAccountCommand(
             email: $email,
+            password: $password,
             fullName: $fullName
         );
 
