@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Doctrine;
 
 use App\Domain\Account\Account;
 use App\Domain\Account\AccountRepositoryInterface;
+use App\Domain\Account\AccountRole;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
@@ -29,11 +30,15 @@ class AccountRepository implements AccountRepositoryInterface
             $entity = new AccountEntity();
             $entity->setUuid($account->getUuid());
             $entity->setEmail($account->getEmail());
+            $entity->setPassword($account->getPassword());
             $entity->setFullName($account->getFullName());
+            $entity->setRole($account->getRole());
             $entity->setCreatedAt($account->getCreatedAt());
         }
 
         $entity->setStatus($account->getStatus());
+        $entity->setPassword($account->getPassword());
+        $entity->setRole($account->getRole());
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
@@ -59,6 +64,19 @@ class AccountRepository implements AccountRepositoryInterface
         $repository = $this->entityManager->getRepository(AccountEntity::class);
 
         $entity = $repository->findOneBy(['uuid' => $uuid]);
+
+        if ($entity === null) {
+            return null;
+        }
+
+        return $this->mapToDomain($entity);
+    }
+
+    public function findByEmail(string $email): ?Account
+    {
+        $repository = $this->entityManager->getRepository(AccountEntity::class);
+
+        $entity = $repository->findOneBy(['email' => $email]);
 
         if ($entity === null) {
             return null;
@@ -133,14 +151,18 @@ class AccountRepository implements AccountRepositoryInterface
     {
         $uuid = $entity->getUuid();
         $email = $entity->getEmail();
+        $password = $entity->getPassword();
         $fullName = $entity->getFullName();
+        $role = $entity->getRole();
         $status = $entity->getStatus();
         $createdAt = $entity->getCreatedAt();
 
         $account = new Account(
             uuid: $uuid,
             email: $email,
+            password: $password,
             fullName: $fullName,
+            role: AccountRole::from($role->value ?? $role),
             status: $status,
             createdAt: $createdAt
         );

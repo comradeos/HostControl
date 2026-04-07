@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Infrastructure\Http\Attribute\PublicRoute;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
+#[PublicRoute]
 class MetricsController
 {
     private CollectorRegistry $registry;

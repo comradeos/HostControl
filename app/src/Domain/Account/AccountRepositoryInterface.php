@@ -12,6 +12,8 @@ interface AccountRepositoryInterface
 
     public function findByUuid(string $uuid): ?Account;
 
+    public function findByEmail(string $email): ?Account;
+
     public function findAll(int $limit, int $offset): array;
 
     public function countAll(): int;

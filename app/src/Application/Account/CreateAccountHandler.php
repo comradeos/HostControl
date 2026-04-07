@@ -9,6 +9,7 @@ use App\Application\Common\ValidationException;
 use App\Application\Common\ValidationHelper;
 use App\Domain\Account\Account;
 use App\Domain\Account\AccountRepositoryInterface;
+use App\Domain\Account\AccountRole;
 use App\Domain\Account\AccountStatus;
 use DateTimeImmutable;
 use Ramsey\Uuid\Uuid;
@@ -37,14 +38,18 @@ class CreateAccountHandler
 
         $uuid = $this->generateUuid();
         $email = $command->getEmail();
+        $password = password_hash($command->getPassword(), PASSWORD_BCRYPT);
         $fullName = $command->getFullName();
+        $role = AccountRole::USER;
         $status = AccountStatus::ACTIVE;
         $createdAt = new DateTimeImmutable();
 
         $account = new Account(
             uuid: $uuid,
             email: $email,
+            password: $password,
             fullName: $fullName,
+            role: $role,
             status: $status,
             createdAt: $createdAt
         );
