@@ -7,6 +7,7 @@ namespace App\Infrastructure\Http;
 use App\Infrastructure\Http\Attribute\PublicRoute;
 use App\Infrastructure\Security\JwtService;
 use InvalidArgumentException;
+use Predis\Client as RedisClient;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -17,9 +18,12 @@ class JwtAuthListener
 {
     private JwtService $jwtService;
 
-    public function __construct(JwtService $jwtService)
+    private RedisClient $redis;
+
+    public function __construct(JwtService $jwtService, RedisClient $redis)
     {
         $this->jwtService = $jwtService;
+        $this->redis = $redis;
     }
 
     /**
@@ -46,6 +50,18 @@ class JwtAuthListener
         $token = substr($authHeader, 7);
 
         $payload = $this->jwtService->decode($token);
+
+        if (isset($payload['sid']) === false) {
+            throw new InvalidArgumentException('Invalid session');
+        }
+
+        $sessionId = $payload['sid'];
+
+        $exists = $this->redis->get('session:' . $sessionId);
+
+        if ($exists === null) {
+            throw new InvalidArgumentException('Session expired');
+        }
 
         $request->attributes->set('user', $payload);
     }
@@ -74,15 +90,12 @@ class JwtAuthListener
 
                 $reflectionClass = new ReflectionClass($class);
 
-                if ($reflectionClass->getAttributes(PublicRoute::class) !== []) {
-                    return true;
-                }
             } else {
                 $reflectionClass = new ReflectionClass($controller);
 
-                if ($reflectionClass->getAttributes(PublicRoute::class) !== []) {
-                    return true;
-                }
+            }
+            if ($reflectionClass->getAttributes(PublicRoute::class) !== []) {
+                return true;
             }
 
             return false;

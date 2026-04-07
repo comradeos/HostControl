@@ -6,6 +6,7 @@ namespace App\Controller\Account;
 
 use App\Application\Account\LoginAccountCommand;
 use App\Application\Account\LoginAccountHandler;
+use App\Application\Common\ValidationException;
 use App\Infrastructure\Http\ApiResponse;
 use App\Infrastructure\Http\Attribute\PublicRoute;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,9 @@ class LoginAccountController
         $this->handler = $handler;
     }
 
+    /**
+     * @throws ValidationException
+     */
     #[Route('/api/auth/login', methods: ['POST'])]
     public function __invoke(Request $request): Response
     {

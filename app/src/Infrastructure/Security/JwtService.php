@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security;
 
+use InvalidArgumentException;
+
 class JwtService
 {
     private string $secret;
@@ -37,7 +39,7 @@ class JwtService
         $parts = explode('.', $token);
 
         if (count($parts) !== 3) {
-            throw new \InvalidArgumentException('Invalid token');
+            throw new InvalidArgumentException('Invalid token');
         }
 
         [$base64Header, $base64Payload, $base64Signature] = $parts;
@@ -52,13 +54,19 @@ class JwtService
         );
 
         if ($signature !== $base64Signature) {
-            throw new \InvalidArgumentException('Invalid token signature');
+            throw new InvalidArgumentException('Invalid token signature');
         }
 
         $payload = json_decode($this->base64UrlDecode($base64Payload), true);
 
         if (!is_array($payload)) {
-            throw new \InvalidArgumentException('Invalid token payload');
+            throw new InvalidArgumentException('Invalid token payload');
+        }
+
+        if (isset($payload['exp']) === true) {
+            if (time() > $payload['exp']) {
+                throw new InvalidArgumentException('Token expired');
+            }
         }
 
         return $payload;

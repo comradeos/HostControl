@@ -9,6 +9,8 @@ use App\Application\Common\ValidationHelper;
 use App\Domain\Account\AccountRepositoryInterface;
 use App\Infrastructure\Security\JwtService;
 use InvalidArgumentException;
+use Predis\Client as RedisClient;
+use Random\RandomException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LoginAccountHandler
@@ -19,18 +21,23 @@ class LoginAccountHandler
 
     private JwtService $jwtService;
 
+    private RedisClient $redis;
+
     public function __construct(
         AccountRepositoryInterface $repository,
         ValidatorInterface $validator,
-        JwtService $jwtService
+        JwtService $jwtService,
+        RedisClient $redis
     ) {
         $this->repository = $repository;
         $this->validator = $validator;
         $this->jwtService = $jwtService;
+        $this->redis = $redis;
     }
 
     /**
      * @throws ValidationException
+     * @throws RandomException
      */
     public function handle(LoginAccountCommand $command): string
     {
@@ -51,11 +58,21 @@ class LoginAccountHandler
             throw new InvalidArgumentException('Invalid credentials');
         }
 
+        $sessionId = bin2hex(random_bytes(16));
+
+        $this->redis->setex(
+            'session:' . $sessionId,
+            3600,
+            $account->getUuid()
+        );
+
         $payload = [
             'sub' => $account->getUuid(),
             'email' => $account->getEmail(),
             'role' => $account->getRole()->value,
+            'sid' => $sessionId,
             'iat' => time(),
+            'exp' => time() + 3600,
         ];
 
         $token = $this->jwtService->encode($payload);
