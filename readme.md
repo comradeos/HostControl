@@ -161,3 +161,20 @@ Response format:
 -   Docker environment
 -   Logs to stdout
 -   Same dev/prod
+
+
+
+
+### Grapana
+
+```grafana
+sum(rate(app_db_query_total[1m])) by (type)
+
+sum(rate(app_http_requests_total[1m]))
+```
+
+
+make build 
+
+
+
