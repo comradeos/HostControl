@@ -39,6 +39,12 @@ migrate:
 test:
 	docker exec -it $(APP_CONTAINER) php bin/phpunit
 
+test-unit:
+	docker exec -it $(APP_CONTAINER) php bin/phpunit tests/Unit
+
+test-codeception:
+	docker exec -it $(APP_CONTAINER) php vendor/bin/codecept run Api
+
 qa:
 	docker exec -it $(APP_CONTAINER) php vendor/bin/phpstan analyse
 	docker exec -it $(APP_CONTAINER) php vendor/bin/php-cs-fixer fix
