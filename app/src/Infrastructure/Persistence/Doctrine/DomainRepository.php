@@ -29,8 +29,16 @@ class DomainRepository implements DomainRepositoryInterface
             $entity->setCreatedAt($domain->getCreatedAt());
         }
 
+        $account = $this->entityManager
+            ->getRepository(AccountEntity::class)
+            ->findOneBy(['uuid' => $domain->getAccountUuid()]);
+
+        if ($account === null) {
+            throw new \InvalidArgumentException(sprintf('Account with uuid %s not found', $domain->getAccountUuid()));
+        }
+
         $entity->setName($domain->getName());
-        $entity->setAccountUuid($domain->getAccountUuid());
+        $entity->setAccountUuid($account->getUuid());
         $entity->setStatus($domain->getStatus());
 
         $this->entityManager->persist($entity);

@@ -31,7 +31,7 @@ final class JwtServiceTest extends TestCase
         $service = new JwtService('test-secret');
         $token = $service->encode(['sub' => 'user-123']);
 
-        [$header, $payload, $signature] = explode('.', $token);
+        [$header, , $signature] = explode('.', $token);
         $tamperedPayload = rtrim(strtr(base64_encode('{"sub":"attacker"}'), '+/', '-_'), '=');
         $tamperedToken = $header . '.' . $tamperedPayload . '.' . $signature;
 
